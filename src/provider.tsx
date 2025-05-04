@@ -7,7 +7,7 @@ import React, { type ReactNode } from 'react'
 import { WagmiProvider, type Config } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-export const projectId = '39f194fa9161822553fe5a2781095dfc'
+export const projectId = '9904afd44f42117adce3be3491ef5017'
 
 export const networks = [mainnet, arbitrum, avalanche, base, optimism, polygon]
 
