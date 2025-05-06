@@ -6,34 +6,34 @@ import {
   ScriptOnce,
   Scripts,
 } from "@tanstack/react-router";
-// import { createServerFn } from "@tanstack/react-start";
-// import { getWebRequest } from "@tanstack/react-start/server";
+import { createServerFn } from "@tanstack/react-start";
+import { getWebRequest } from "@tanstack/react-start/server";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-// import { auth } from "~/lib/server/auth";
+import { auth } from "~/lib/server/auth";
 import appCss from "~/lib/styles/app.css?url";
 import ContextProvider from "~/provider";
 
-// const getUser = createServerFn({ method: "GET" }).handler(async () => {
-//   const { headers } = getWebRequest()!;
-//   const session = await auth.api.getSession({ headers });
+const getUser = createServerFn({ method: "GET" }).handler(async () => {
+  const { headers } = getWebRequest()!;
+  const session = await auth.api.getSession({ headers });
 
-//   return session?.user || null;
-// });
+  return session?.user || null;
+});
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
-  // user: Awaited<ReturnType<typeof getUser>>;
+  user: Awaited<ReturnType<typeof getUser>>;
 }>()({
-  // beforeLoad: async ({ context }) => {
-  //   const user = await context.queryClient.fetchQuery({
-  //     queryKey: ["user"],
-  //     queryFn: ({ signal }) => getUser({ signal }),
-  //   }); // we're using react-query for caching, see router.tsx
-  //   return { user };
-  // },
+  beforeLoad: async ({ context }) => {
+    const user = await context.queryClient.fetchQuery({
+      queryKey: ["user"],
+      queryFn: ({ signal }) => getUser({ signal }),
+    }); // we're using react-query for caching, see router.tsx
+    return { user };
+  },
   head: () => ({
     meta: [
       {
@@ -79,7 +79,6 @@ function RootDocument({ children }: { readonly children: React.ReactNode }) {
             )`}
         </ScriptOnce>
 
-        
         <ContextProvider>{children}</ContextProvider>
 
         <ReactQueryDevtools buttonPosition="bottom-left" />

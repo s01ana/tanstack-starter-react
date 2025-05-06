@@ -1,16 +1,21 @@
 import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
-import { Link, createFileRoute } from "@tanstack/react-router";
-import ThemeToggle from "~/components/theme-toggle";
+import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
+import ThemeToggle from "~/components/theme-toogle";
 import { Button } from "~/components/ui/button";
+import authClient from "~/lib/auth-client";
 
 export const Route = createFileRoute("/")({
   component: Home,
-  // loader: ({ context }) => {
-  //   return { user: context.user };
-  // },
+  loader: ({ context }) => {
+    return { user: context.user };
+  },
 });
 
 function Home() {
+  const { queryClient } = Route.useRouteContext();
+  const { user } = Route.useLoaderData();
+  const router = useRouter();
+
   const { open } = useAppKit()
   const { address } = useAppKitAccount();
 
@@ -26,25 +31,55 @@ function Home() {
         </div>
       </div>
 
-      <div className="flex flex-col items-center gap-2">
-        <p>...</p>
-        <div className="flex items-center gap-2 max-sm:flex-col">
-          <Button type="button" asChild className="w-fit" size="lg">
-            <Link to="/dashboard">Dashboard</Link>
-          </Button>
-          {!address && <Button
-            type="button"
-            asChild 
-            className="w-fit cursor-pointer" 
-            size="lg" 
-            onClick={() => open()}
-          >
-            <div>Connect Wallet</div>
-          </Button>}
+      {user ? (
+        <div className="flex flex-col items-center gap-2">
+          <p>Welcome back, {user.name}!</p>
 
-          {address && <appkit-account-button />}
+          <div className="flex items-center gap-2 max-sm:flex-col">
+            <Button type="button" asChild className="w-fit" size="lg">
+              <Link to="/dashboard">Dashboard</Link>
+            </Button>
+            {!address && <Button
+              type="button"
+              asChild 
+              className="w-fit cursor-pointer" 
+              size="lg" 
+              onClick={() => open()}
+            >
+              <div>Connect Wallet</div>
+            </Button>}
+
+            {address && <appkit-account-button />}
+          </div>
+          <div className="text-center text-xs sm:text-sm">
+            Session user:
+            <pre className="max-w-screen overflow-x-auto px-2 text-start">
+              {JSON.stringify(user, null, 2)}
+            </pre>
+          </div>
+
+          <Button
+            onClick={async () => {
+              await authClient.signOut();
+              await queryClient.invalidateQueries({ queryKey: ["user"] });
+              await router.invalidate();
+            }}
+            type="button"
+            className="w-fit"
+            variant="destructive"
+            size="lg"
+          >
+            Sign out
+          </Button>
         </div>
-      </div>
+      ) : (
+        <div className="flex flex-col items-center gap-2">
+          <p>You are not signed in.</p>
+          <Button type="button" asChild className="w-fit" size="lg">
+            <Link to="/login">Log in</Link>
+          </Button>
+        </div>
+      )}
 
       <div className="flex flex-col items-center gap-2">
         <ThemeToggle />
