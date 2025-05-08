@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { AppSidebar } from "~/components/app-sidebar"
 import { ChartAreaInteractive } from "~/components/chart-area-interactive"
 import { DataTable } from "~/components/data-table"
@@ -12,16 +12,7 @@ import data from "./data.json"
 
 
 export const Route = createFileRoute("/dashboard")({
-  component: DashboardLayout,
-  beforeLoad: async ({ context }) => {
-    if (!context.user) {
-      throw redirect({ to: "/login" });
-    }
-
-    // `context.queryClient` is also available in our loaders
-    // https://tanstack.com/start/latest/docs/framework/react/examples/start-basic-react-query
-    // https://tanstack.com/router/latest/docs/framework/react/guide/external-data-loading
-  },
+  component: DashboardLayout
 });
 
 function DashboardLayout() {

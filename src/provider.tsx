@@ -42,8 +42,8 @@ createAppKit({
   metadata: metadata,
   features: {
     analytics: true, // Optional - defaults to your Cloud configuration
-    socials: false,
-    email: false,
+    socials: ['google', 'github'],
+    email: true,
     swaps: false,
     send: false,
     
